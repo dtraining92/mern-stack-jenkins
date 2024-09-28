@@ -1,0 +1,46 @@
+cd backend
+npm install
+cd ..
+echo "Jenkins workspace directory: $WORKSPACE"
+tar -czvf backend.tar.gz backend 
+echo "zipped the folder backend"
+scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/j-keypair.pem -r $WORKSPACE/backend.tar.gz ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com:/home/ubuntu
+echo "deployment of backend is done"
+
+cd frontend 
+npm install
+npm run build 
+tar -czvf build.tar.gz build 
+scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/j-keypair.pem -r /Users/dillikarchaitanya/.jenkins/workspace/mern-stack-project/frontend/build.tar.gz ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com:/home/ubuntu
+
+ssh -i /Users/dillikarchaitanya/Downloads/j-keypair.pem ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com <<EOF
+echo "connection established"
+tar -xvf build.tar.gz 
+#sudo useradd -g nginx nginxuser
+#sudo groupadd nginx
+#echo '1234' | sudo -S useradd -g nginx nginx
+
+#sudo chown -R nginx:nginx /var/www/html
+rm -rf /var/www/html/*
+sudo chmod -R 755 /var/www/html
+
+
+sudo mv build/* /var/www/html
+sudo nginx -t && sudo systemctl restart nginx
+
+cd /home/ubuntu
+ls
+tar -xvf backend.tar.gz 
+cd backend
+ls
+pm2 list
+pm2 start index.js
+
+
+
+
+
+
+
+
+
