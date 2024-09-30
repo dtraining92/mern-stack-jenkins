@@ -1,46 +1,67 @@
+# Navigate to backend directory and install dependencies
 cd backend
 npm install
 cd ..
 echo "Jenkins workspace directory: $WORKSPACE"
 tar -czvf backend.tar.gz backend 
-echo "zipped the folder backend"
-scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/j-keypair.pem -r $WORKSPACE/backend.tar.gz ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com:/home/ubuntu
-echo "deployment of backend is done"
+echo "zipped the folder to"
+#scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/ad.pem -r $WORKSPACE/backend.tar.gz ubuntu@ec2-54-164-107-35.compute-1.amazonaws.com:/home/ubuntu/
+#export PATH=$PATH:/opt/homebrew/bin
 
-cd frontend 
+aws --version  # This should now work
+
+INSTANCE_ID="i-0809efc4b42bd72ee"  # Replace with your EC2 instance ID
+REGION="us-east-1" 
+EC2_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PublicDnsName" --output text  --region $REGION)
+# Check if EC2_DNS is retrieved
+if [ -z "$EC2_DNS" ]; then
+    echo "Failed to retrieve EC2 DNS."
+    exit 1
+fi
+
+scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/ad.pem -r $WORKSPACE/backend.tar.gz ubuntu@$EC2_DNS:/home/ubuntu/
+
+#scp -i /Users/dillikarchaitanya/Downloads/ad.pem -r $WORKSPACE/backend.tar.gz ubuntu@ec2-54-224-255-228.compute-1.amazonaws.com:/home/ubuntu/
+# Print a message to indicate the end of the script
+echo "Script completed."
+# Run backend build or start script
+ # or npm start
+# Navigate to frontend directory and install dependencies
+cd frontend
 npm install
-npm run build 
+# Build the React application
+npm run build
 tar -czvf build.tar.gz build 
-scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/j-keypair.pem -r /Users/dillikarchaitanya/.jenkins/workspace/mern-stack-project/frontend/build.tar.gz ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com:/home/ubuntu
+scp -o StrictHostKeyChecking=no -i /Users/dillikarchaitanya/Downloads/ad.pem build.tar.gz ubuntu@ec2-54-164-107-35.compute-1.amazonaws.com:/home/ubuntu/
 
-ssh -i /Users/dillikarchaitanya/Downloads/j-keypair.pem ubuntu@ec2-54-174-235-35.compute-1.amazonaws.com <<EOF
+
+ssh -i /Users/dillikarchaitanya/Downloads/ad.pem ubuntu@ec2-54-164-107-35.compute-1.amazonaws.com <<EOF
 echo "connection established"
-tar -xvf build.tar.gz 
-#sudo useradd -g nginx nginxuser
-#sudo groupadd nginx
-#echo '1234' | sudo -S useradd -g nginx nginx
-
-#sudo chown -R nginx:nginx /var/www/html
-rm -rf /var/www/html/*
-sudo chmod -R 755 /var/www/html
-
-
-sudo mv build/* /var/www/html
-sudo nginx -t && sudo systemctl restart nginx
-
 cd /home/ubuntu
+tar -xzf build.tar.gz
+
+sudo rm -rf /var/www/html/*
+sudo chmod -R 755 /var/www/html
+sudo mv build/* /var/www/html
+sudo groupadd nginx
+sudo useradd -g nginx nginx
+sudo chown -R nginx:nginx /var/www/html
+sudo nginx -t && sudo systemctl restart nginx
+# Move the build folder to a location accessible by the web server
+#sudo mv build /var/www/html
+echo "untar backend.tar.gz"
+tar -xzf backend.tar.gz
 ls
-tar -xvf backend.tar.gz 
 cd backend
 ls
-pm2 list
-pm2 start index.js
+sudo systemctl restart nginx
 
-
-
-
-
-
-
-
-
+PROCESS_NAME="index.js"
+# Check if the process is running
+if pm2 list | grep -q "index.js"; then
+    echo "index.js is already running. Restarting..."
+    pm2 restart "index.js" --update-env -f
+else
+    echo "index.js is not running. Starting..."
+    pm2 start "index.js" --update-env -f
+fi
