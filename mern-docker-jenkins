@@ -1,0 +1,11 @@
+#which docker
+export PATH=$PATH:/opt/homebrew/bin
+cd frontend 
+docker build -t frontend-jenkins .
+cd ..
+cd backend 
+docker build -t backend-jenkins .
+docker tag frontend-jenkins chaitanya751293/mern:frontend-latest
+docker tag backend-jenkins chaitanya751293/mern:backend-latest
+docker push chaitanya751293/mern:backend-latest
+docker push chaitanya751293/mern:frontend-latest
