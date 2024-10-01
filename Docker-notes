@@ -1,0 +1,106 @@
+Docker:
+Microservices:
+Instance of the services(small parts of the application) ?
+Advantage in microservices ?
+Example: make changes of signup service —> microservice 
+Signin service 
+
+
+What is Docker ?
+
+Docker is an open-source platform designed to automate the deployment, scaling, and management of applications using containers.
+
+What is Docker Image?
+In Docker, an image is a lightweight, standalone, and executable package that includes everything needed to run a piece of software. This includes the application code, runtime, libraries, environment variables, and configuration files. Docker images are used to create Docker containers.
+What is a Container ?
+Container is an executable unit that packages an application and all of its dependencies, including libraries, binaries, and configuration files. Containers are based on Docker images, and when you run an image, a container is created.
+
+
+
+
+What is a Docker Registry ?
+
+An image registry is a centralized location for storing and sharing your container images. It can be either public or private.
+
+While Docker Hub is a popular option, there are many other available container registries available today, including Amazon Elastic Container Registry(ECR), Azure Container Registry (ACR), and Google Container Registry (GCR). 
+
+
+
+
+Writing a Dockerfile:
+
+A Dockerfile is a text-based document, is a set of instructions that's used to create a container image. 
+It provides instructions to the image builder on the commands to run, files to copy, startup command, and more.
+
+
+
+
+
+Docker Engine:
+The core component of Docker, responsible for creating and managing containers. It includes both the Docker daemon (which runs on the host machine) and the Docker CLI (command-line interface), which you use to interact with Docker.
+
+
+
+
+Docker Volumes:
+
+
+Docker commands:
+
+List Images:
+
+
+docker images
+
+Pull an Image from a Registry:
+
+docker pull <image_name>
+
+Build an Image from a Dockerfile:
+
+docker build -t <image_name> .
+
+Remove an Image:
+
+docker rmi <image_name>
+
+Basic Commands for Docker Containers:
+Run a Container:
+docker run -d -p 8080:80 nginx
+List Running Containers:
+docker ps
+
+Stop a Container:
+docker stop <container_id>
+
+Remove a Container:
+docker rm <container_id>
+
+create a new tag for an existing Docker image:
+docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+Ex: docker tag imagename username/my-app:tagname
+    Push the docker image to the Dockerhub: 
+    docker push username/my-app:tagname
+    Delete the docker tag:
+    docker rmi my-app:tagname
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
