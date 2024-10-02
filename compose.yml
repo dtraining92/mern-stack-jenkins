@@ -1,0 +1,25 @@
+version: '3.8'  # Specify the Docker Compose version
+services:
+  frontend:
+    image: frontend-image
+    container_name: frontend-c
+    ports:
+      - "3001:3000"  # Map port 80 on the host to port 80 on the container
+    networks:
+      - mern-network
+    volumes:
+      - /tmp/persistent-data/frontend:/app/  # Map host folder to container folder
+
+    
+  backend:
+    image: backend-image
+    container_name: backend-container
+    ports:
+      - "8000:8000"  # Map port 5000 on the host to port 5000 on the container
+    networks:
+      - mern-network
+    volumes:
+      - /tmp/persistent-data/backend:/app/
+networks:
+  mern-network:
+    driver: bridge
