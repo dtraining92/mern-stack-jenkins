@@ -1,0 +1,157 @@
+Kubernetes commands
+Check Cluster Info:
+     kubectl cluster-info
+
+List Nodes:
+kubectl get nodes
+
+Get Detailed Node Information:
+kubectl describe node <node-name>
+
+Working with Pods
+List All Pods:
+kubectl get pods
+
+Describe a Pod:
+      kubectl describe pod <pod-name>
+Create a Pod (using a YAML file):
+ kubectl apply -f <filename>.yaml
+
+Delete a Pod:
+kubectl delete pod <pod-name>
+
+Execute Command Inside a Running Pod:
+      kubectl exec -it <pod-name> -- /bin/bash
+
+Check Pod Logs:
+kubectl logs <pod-name>
+
+Working with Deployments
+List Deployments:
+kubectl get deployments
+Create a Deployment:
+kubectl create deployment <deployment-name> --image=<image-name>
+
+Scale a Deployment:
+kubectl scale deployment <deployment-name> --replicas=<number>
+
+Update a Deployment:
+            kubectl set image deployment/<deployment-name> <container-name>=<new-image>
+
+Delete a Deployment:
+kubectl delete deployment <deployment-name>
+
+Check the status of the individual pods to ensure they are running as expected:
+
+kubectl get pods -l app=frontend
+
+
+Working with Services
+List Services:
+kubectl get services
+
+Expose a Deployment as a Service:
+kubectl expose deployment <deployment-name> --type=<service-type> --port=<port>
+
+Describe a Service:
+kubectl describe service <service-name>
+
+Delete a Service:
+kubectl delete service <service-name>
+
+
+
+   Namespaces
+List All Namespaces:
+      kubectl get namespaces
+
+Create a Namespace:
+      kubectl create namespace <namespace-name>
+
+Switch to a Different Namespace:
+     kubectl config set-context --current --namespace=<namespace-name>
+verify that the current context has been updated by running:
+kubectl config view --minify
+kubectl get pods -n team-a
+
+Delete a Namespace:
+     kubectl delete namespace <namespace-name>
+
+ConfigMaps & Secrets
+Create a ConfigMap:
+kubectl create configmap <configmap-name> --from-literal=<key>=<value>
+
+Get ConfigMaps:
+kubectl get configmaps
+
+Create a Secret:
+kubectl create secret generic <secret-name> --from-literal=<key>=<value>
+
+Get Secrets:
+kubectl get secrets
+
+
+
+Extra commands(deployments):
+Check the status of the individual pods to ensure they are running as expected:
+     kubectl get pods -l app=frontend
+
+   2. If this deployment exposes a web application, you can use kubectl port-forward to access one of the pods locally:
+    kubectl port-forward deployment/deployment-frontend 3000:3000
+3. Service Creation (Optional): If you want to expose the deployment externally, create a service:
+kubectl expose deployment deployment-frontend --type=NodePort --port=3000
+
+4. Scaling: If you want to scale the number of replicas up or down, you can modify the replicas field:
+kubectl expose deployment deployment-frontend --type=NodePort --port=3000
+
+5. Use Minikube Service Command: Alternatively, you can use the following command to launch the service in your default browser:
+
+minikube service service-frontend --url
+
+minikube ssh 
+curl 10.244.0.11:3000
+
+
+
+
+Commands for mongod: troubleshooting
+
+# Decode username
+echo "<base64-encoded-username>" | base64 --decode
+
+# Decode password
+echo "<base64-encoded-password>" | base64 --decode
+
+Port Forwarding:
+kubectl port-forward svc/mongo-express-service 8081:8081
+
+Access Mongo Express on Localhost:
+http://localhost:8081
+
+
+Once you have the pod name, you can execute a command inside the pod to connect to the MongoDB server:
+
+
+
+kubectl exec -it mongo-client -- bash
+mongo --host mongodb-service --username admin --password pass --authenticationDatabase admin
+
+Volumes:
+
+If the PVC is stuck and not getting deleted after some time, you can force delete it using:
+kubectl delete pvc mongo-express-pvc --grace-period=0 --force
+If the PVC still won’t delete, it may have finalizers preventing its deletion. To check for finalizers:
+kubectl get pvc mongo-express-pvc -o json | jq .metadata.finalizers
+
+If there are finalizers listed, you can remove them by editing the PVC:
+kubectl edit pvc mongo-express-pvc
+Patch the PVC to Remove the Finalizer:
+Run the following command to remove the finalizer from the PVC:
+
+kubectl patch pvc mongo-express-pvc -p '{"metadata":{"finalizers":null}}'
+
+
+
+kubectl get pvc mongo-express-pvc -o json | jq .metadata.finalizers
+
+
