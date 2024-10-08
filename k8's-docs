@@ -1,0 +1,146 @@
+Kubernetes:
+
+Cluster: 
+A Kubernetes cluster is a group of machines (nodes) that work together to run containerized applications. It consists of a control plane (master node) and worker nodes.
+     2. Node:
+A Node is a single machine (physical or virtual) in a Kubernetes cluster. Each node contains services necessary to run the containers, like the kubelet, kube-proxy, and container runtime.
+   3. Pod:
+A pod is the smallest deployable unit in Kubernetes. It is a logical host for one or more containers that share the same network namespace and storage volumes.
+
+
+
+4. Service: 
+Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+       
+A service is an abstraction that defines a set of pods and a policy for accessing them. Services enable loose coupling between microservices by exposing a stable endpoint (IP or DNS) regardless of the pod lifecycle.
+Types of services:
+ClusterIP: Default; makes the service reachable only within the cluster.
+NodePort: Exposes the service on each node's IP at a static port.
+NodePort Range: 30,000–32,767
+
+LoadBalancer: Exposes the service externally using a cloud provider's load balancer.
+
+5. Deployments:
+In Kubernetes (k8s), a deployment is a key resource object that represents a set of pods and their configuration. Deployments are used to manage the desired state of your applications, including the number of replicas (pods), the container images, and the way pods are updated or rolled back.
+
+
+
+6. ReplicaSets:
+ReplicaSet is a workload controller that ensures a specified number of pod replicas are running at any given time. It is a more advanced form of replication controller with the added capability to use label selectors that can match multiple labels and label selectors that are not based on equality.
+
+7. Services:
+ A service is an abstraction that defines a logical set of pods and a policy to access them. It provides a stable IP address and DNS name for the set of pods, allowing other services or users to communicate with them.
+Types:
+ClusterIP: Exposes the service within the cluster.
+NodePort: Exposes the service on each node’s IP at a static port.
+LoadBalancer: Exposes the service externally using a cloud provider's load balancer.
+ExternalName: Maps a service to an external name (DNS).
+
+
+
+Namespace: 
+
+A namespace is a mechanism in Kubernetes to logically divide cluster resources. It provides scope for resource names (like pods, services, etc.) and enables isolation between different projects, teams, or environments (e.g., development, testing, and production) within the same Kubernetes cluster. Namespaces allow different users or teams to manage their resources independently while sharing the underlying infrastructure.
+
+For example, you could create separate namespaces for:
+dev (Development environment)
+test (Testing environment)
+prod (Production environment)
+You have two teams: Team A and Team B. Both teams want to deploy their applications to the same Kubernetes cluster, but you want to ensure that their resources (pods, services, etc.) are isolated from each other.
+
+
+
+
+
+
+
+
+
+
+Create a Namespace for Team-a
+
+Example:
+
+# team-a-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: team-a-podname
+  namespace: team-a  # Specifying namespace
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+
+
+Create a Namespace for Team-b
+
+# team-b-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: team-b-podname
+  namespace: team-b  # Specifying namespace
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+
+
+
+
+
+ConfigMap, Secret
+
+
+Feature
+ConfigMap
+Secret
+Purpose
+Stores non-sensitive configuration data.
+Stores sensitive data like passwords, API keys, tokens.
+Data Type
+Plain text (non-encrypted).
+Base64-encoded (can be encrypted with encryption at rest).
+Security
+Not encrypted, anyone with access can read the data.
+Base64-encoded and intended for sensitive data storage. Access is more restricted.
+Size Limit
+Up to 1 MB.
+Up to 1 MB.
+Mount Type
+Can be mounted as files or environment variables.
+Can be mounted as files or environment variables (often as credentials).
+Use Case
+General configurations like URLs, environment variables.
+Passwords, tokens, certificates, and other sensitive data.
+
+
+
+
+
+Persistent Volume (PV):
+A PersistentVolume (PV) in Kubernetes is a storage resource that has been provisioned in the cluster, allowing users and applications to store data persistently across the lifecycle of containers and pods. Unlike ephemeral storage (which gets deleted when a pod is removed), a PV provides long-term, persistent storage that can survive the deletion or restart of pods.
+
+PVs allow storage to exist independently of the pods that use them. This means data is retained even if the pod is deleted or restarted.
+A PV can be backed by various storage types, such as:
+Cloud storage: AWS EBS (Elastic Block Store), GCE Persistent Disks, Azure Disks.
+Network storage: NFS (Network File System), iSCSI.
+Local storage: Direct-attached storage or local disk.
+PVs have a reclaim policy that determines what happens to the storage when a PersistentVolumeClaim (PVC) that is using it is deleted.
+Retain: The PV is not deleted and remains for future reuse, but must be manually reclaimed.
+Delete: The PV and its data are deleted when the PVC is deleted.
+Recycle: The PV is cleared and made available for use again.
+
+
+A PersistentVolumeClaim (PVC) in Kubernetes is a request for storage made by a user or application. It allows applications to claim a certain amount of storage from a PersistentVolume (PV) in the cluster. The PVC specifies the desired storage size, access mode, and optionally a storage class. Once a PVC is created, Kubernetes tries to find a matching PV and binds it to the PVC.
+If a PersistentVolume (PV) already exists that meets the PVC's criteria (size, access mode), it will bind to that PV.
+
+Once a PVC is created, Kubernetes attempts to bind it to an available PV that matches its requirements (size, access mode, and storage class).
+
+The binding is one-to-one; a single PVC can only bind to a single PV at any time.
+PVCs are scoped to the namespace in which they are created, meaning they can only claim PVs that are available to that namespace.
+
+
+A PVC exists as long as the application needs the storage. When the PVC is deleted, the bound PV is released, and the reclaim policy of the PV determines what happens to the underlying storage (e.g., retain, delete, or recycle).
+
