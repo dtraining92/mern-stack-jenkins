@@ -1,0 +1,34 @@
+Installation steps: 
+
+1. Install Python3 System-wide:
+This command installs Python 3 and its development tools:
+sudo apt-get install python3-full
+
+This installs the full Python 3 package, including standard libraries and essential tools required for development.
+2. Install pip (Python's Package Installer):
+pip is the package manager for Python packages:
+sudo apt install python3-pip
+
+This installs pip3, the package manager for Python 3. You can verify the installation with:
+which pip3
+which python3
+
+3. Install Ansible Core:
+Ansible Core includes the core Ansible utilities like ansible-playbook, ansible-inventory, etc., without additional plugins.
+sudo apt install ansible-core
+
+This installs the core components of Ansible from the system's package manager.
+
+4. Install AWS SDK and CLI Tools:
+Boto3 and Botocore are Python libraries for AWS APIs. You can install them using pip3:
+sudo pip3 install --break-system-packages boto3 botocore
+
+The --break-system-packages option helps override Python's packaging rules and allows the installation of libraries even if it causes conflicts with system packages (this is useful when you need these packages system-wide but aren't concerned with potential system conflicts).
+
+
+
+5. Install AWS CLI (Command Line Interface):
+To install the AWS CLI using pip3, use:
+pip3 install awscli --break-system-packages
+
+This installs AWS CLI v2, allowing you to interact with AWS services. Again, --break-system-packages lets you bypass system package conflicts that might arise.
