@@ -1,0 +1,24 @@
+Ansible:
+
+Ansible is an open-source automation tool used for configuration management, application deployment, and task automation. It helps simplify complex IT processes by allowing users to manage systems and orchestrate workflows across multiple environments.
+Configuration Management: Ensuring systems (servers, databases, etc.) are configured consistently.
+IAC : 
+
+Use of Ansible: 
+automating repetitive tasks
+enabling continuous delivery
+maintaining system consistency across development, testing, and production environments.
+
+Key Features:
+Agentless: No need to install any software on remote nodes.
+
+Idempotent: Ansible is designed to be idempotent, meaning that running the same playbook multiple times will produce the same result. This ensures that configurations remain consistent and repeatable across different environments.
+
+Declarative language: Ansible uses YAML (Yet Another Markup Language) to define automation scripts, called playbooks. YAML is human-readable and allows users to describe the desired state of a system without needing complex code.
+
+Core Components:
+Inventory: A list of nodes (hosts) that Ansible manages, usually in a simple text file, .ini or .yaml format.
+Playbooks: The heart of Ansible. Playbooks are YAML files where you define tasks for configuring hosts, installing software, and other operations.
+Modules: Ansible comes with hundreds of built-in modules that perform specific tasks (e.g., file management, user management, package installation).
+Roles:Roles help organize playbooks into reusable components. A role typically includes tasks, variables, files, templates, and handlers related to a specific function (e.g., web server configuration).
+.
