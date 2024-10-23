@@ -1,0 +1,47 @@
+
+Create an Ec2- instance 
+
+Secure AWS Credentials
+Environment Variables: Set your AWS credentials in the environment, so they are not hardcoded in the playbook:
+nano ~/.bashrc
+  export AWS_ACCESS_KEY_ID=""
+  export AWS_SECRET_ACCESS_KEY=""
+
+Apply the changes by running:
+source ~/.bashrc
+
+
+
+2. Use AWS CLI Configuration: Alternatively, configure your AWS CLI credentials. Ansible can pick up credentials from the default profile:
+aws configure
+This will store your credentials in ~/.aws/credentials in a more secure way.
+
+
+Create-ec2-.yml
+---
+- name: Create an EC2 instance
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create an EC2 instance
+      community.aws.ec2_instance:
+        name: "MyEC2Instance"
+        region: "us-east-1"
+        instance_type: "t2.micro"
+        key_name: "ad"
+        security_groups: 
+          - "sg-04b0bf4fda6192d31"  # List of security groups
+        image_id: "ami-04a81a99f5ec58529"
+        wait: yes
+        count: 1
+      register: ec2
+      environment:
+        # Use environment variables instead of hardcoding AWS credentials
+        AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+    - name: Print instance information
+      debug:
+        var: ec2.instances
+3. Run the Playbook: You can run your Ansible playbook with the following command:
+ansible-playbook create-ec2-.yml
