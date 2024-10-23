@@ -1,0 +1,28 @@
+To install nginx:
+ Create playbook  install-nginx.yml file to install nginx
+
+install-nginx.yml 
+---
+- name: Install Nginx on Ubuntu
+  hosts: all  # Adjust this to your inventory or specific hosts
+  become: yes  # Use sudo to install packages
+  tasks:
+    - name: Update package index
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Allow 'Nginx Full' through the firewall
+      ufw:
+        rule: allow
+        name: 'Nginx Full'
